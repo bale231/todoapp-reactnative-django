@@ -1,11 +1,12 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from .models import ToDo
 from .serializers import ToDoSerializer
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
-
-## TODOS ViewSet
 class ToDoViewSet(viewsets.ModelViewSet):
-    queryset = ToDo.objects.all()
     serializer_class = ToDoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Filtra le ToDo in base all'utente autenticato
+        return ToDo.objects.filter(user=self.request.user)
